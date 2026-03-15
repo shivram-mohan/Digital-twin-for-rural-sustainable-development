@@ -1,0 +1,58 @@
+# ICAR Guidelines: Groundnut Cultivation in Anantapur
+
+## Sowing
+- Recommended varieties: TMV-2, K-6, ICGS-76, TAG-24
+- Sowing window: June 15 - July 15 (after 50mm cumulative rainfall)
+- Seed rate: 100 kg/ha for spreading, 120 kg/ha for bunch types
+- Spacing: 30cm x 10cm
+
+## Water Management
+- Critical irrigation stages: Pegging (35-40 DAS), Pod formation (60-70 DAS)
+- Protective irrigation at pegging increases yield by 25-30%
+- Total water requirement: 450-500 mm
+- Soil moisture should not fall below 25% during critical stages
+
+## Fertilizer
+- Basal: 20 kg N + 40 kg P2O5 per hectare
+- Gypsum: 200 kg/ha at flowering (40-45 DAS)
+
+---
+
+# PM-KUSUM Scheme Summary
+
+## Component A: Decentralized Solar Power Plants (up to 2 MW)
+- Farmers can install on barren/fallow land
+- Power purchased by DISCOM at fixed tariff, 30% CFA
+
+## Component B: Standalone Solar Agricultural Pumps
+- Solar pumps up to 7.5 HP
+- Subsidy: 30% CFA + 30% State + 40% farmer (loan available)
+
+## Component C: Solarization of Grid-Connected Pumps
+- 30% CFA + 30% State subsidy
+- Excess power sold to DISCOM
+
+---
+
+# Jal Jeevan Mission - Rural Water Supply
+- Target: 55 LPCD for every rural household via tap connection
+- AP Status: ~65% households connected (2024)
+- Groundwater: Anantapur classified Over-Exploited in several mandals
+- Recommended: Rainwater harvesting, check dams, farm ponds
+
+---
+
+# Anantapur Climate Profile
+- Annual rainfall: 544 mm (61% SW monsoon)
+- Most drought-prone district in AP
+- Temperature: 20-42°C range
+- Soil: Red sandy loam (78%), low water retention
+- Solar: 5.5 kWh/m²/day, 250-280 clear days/year
+
+---
+
+# PMFBY (Crop Insurance)
+- Premium: 2% for Kharif, 1.5% for Rabi
+- Covers: Drought, flood, hailstorm, pest/disease
+- Notified crops for Anantapur: Groundnut, Sunflower, Castor, Chickpea
+- Claim process: Report within 72 hours via app or agriculture officer

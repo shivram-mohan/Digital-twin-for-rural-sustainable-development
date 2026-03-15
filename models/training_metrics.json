@@ -1,0 +1,18 @@
+[
+  {
+    "model": "Soil Moisture",
+    "r2": 0.9185
+  },
+  {
+    "model": "Solar Power",
+    "r2": 0.9988
+  },
+  {
+    "model": "Crop Yield",
+    "r2": 0.9773
+  },
+  {
+    "model": "Population",
+    "type": "System Dynamics"
+  }
+]
