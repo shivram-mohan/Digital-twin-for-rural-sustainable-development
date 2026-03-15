@@ -58,7 +58,7 @@ digital-twin-v2/
 
 ---
 
-## Getting REAL Data (Critical for Paper)
+## Getting REAL Data 
 
 ### 1. NASA POWER — Weather & Solar
 ```
