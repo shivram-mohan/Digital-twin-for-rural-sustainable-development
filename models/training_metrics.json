@@ -1,15 +1,15 @@
 [
   {
     "model": "Soil Moisture",
-    "r2": 0.9185
+    "r2": 0.9945
   },
   {
     "model": "Solar Power",
-    "r2": 0.9988
+    "r2": 0.9968
   },
   {
     "model": "Crop Yield",
-    "r2": 0.9773
+    "r2": 0.8903
   },
   {
     "model": "Population",

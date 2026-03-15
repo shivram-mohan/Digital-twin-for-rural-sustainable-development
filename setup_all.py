@@ -42,72 +42,82 @@ print("  Kalyandurg, Anantapur District, AP")
 print("="*60)
 
 # ============ STEP 1: GENERATE WEATHER DATA ============
-print("\n[1/5] Generating hourly weather data (8784 hours)...")
-records = []
-sm, gw = 35.0, 8.5
-start = pd.Timestamp("2024-01-01")
-for i in range(8784):
-    ts = start + pd.Timedelta(hours=i)
-    m, h, doy = ts.month, ts.hour, ts.dayofyear
-    at,tr,ah,mr,sp,aw = CLIMATE[m]
-    
-    temp = at + (tr/2)*(-np.cos(2*np.pi*(h-14)/24)) + np.random.normal(0,1.5)
-    hum = np.clip(ah + 15*np.cos(2*np.pi*(h-14)/24) + np.random.normal(0,5), 15, 98)
-    
-    cf = (0.5+0.5*np.random.beta(2,3)) if m in[6,7,8,9] else (0.85+0.15*np.random.beta(5,2))
-    sol = max(0, solar_curve(h, sp*cf, doy) + np.random.normal(0,15))
-    csol = solar_curve(h, sp, doy)
-    
-    rain = 0.0
-    rp = 0.08 if m in[6,7,8,9] else (0.02 if m in[5,10,11] else 0.003)
-    if np.random.random() < rp:
-        rain = min(25, np.random.exponential(mr/(30*24*rp)))
-    if rain > 0: sol *= 0.2; hum = min(98, hum+20)
-    
-    wind = max(0.2, aw + np.random.normal(0,0.8))
-    et = 0.0023*(temp+17.8)*(sol/1000)*0.15 if sol>0 else 0.01
-    sm += rain*0.7 - et - max(0,(sm-40)*0.02)
-    sm = np.clip(sm, 5, 45)
-    gw += et*0.001 - rain*0.0005*0.7
-    gw = np.clip(gw, 3, 20)
-    
-    pa = 27.8  # panel area for 5kW
-    pw = max(0, sol*pa*0.18*(1-0.004*max(0,temp-25)))
-    csi = sol/csol if csol>10 else 0
-    
-    records.append([ts,round(temp,1),round(temp+np.random.uniform(0,2),1),
-        round(temp-np.random.uniform(0,2),1),round(hum,1),round(sol,1),
-        round(csol,1),round(rain,2),round(wind,1),round(csi,3),
-        round(sm,1),round(gw,2),round(pw,1)])
+if os.path.exists(f"{RAW}/nasa_power_kalyandurg_2024_original.csv"):
+    print("\n[1/5] Real NASA POWER data found — skipping generation ✅")
+    df_w = pd.read_csv(f"{RAW}/nasa_power_kalyandurg_2024_original.csv")
+else:
+    print("\n[1/5] Generating hourly weather data (8784 hours)...")
+    records = []
+    sm, gw = 35.0, 8.5
+    start = pd.Timestamp("2024-01-01")
+    for i in range(8784):
+        ts = start + pd.Timedelta(hours=i)
+        m, h, doy = ts.month, ts.hour, ts.dayofyear
+        at,tr,ah,mr,sp,aw = CLIMATE[m]
+        
+        temp = at + (tr/2)*(-np.cos(2*np.pi*(h-14)/24)) + np.random.normal(0,1.5)
+        hum = np.clip(ah + 15*np.cos(2*np.pi*(h-14)/24) + np.random.normal(0,5), 15, 98)
+        
+        cf = (0.5+0.5*np.random.beta(2,3)) if m in[6,7,8,9] else (0.85+0.15*np.random.beta(5,2))
+        sol = max(0, solar_curve(h, sp*cf, doy) + np.random.normal(0,15))
+        csol = solar_curve(h, sp, doy)
+        
+        rain = 0.0
+        rp = 0.08 if m in[6,7,8,9] else (0.02 if m in[5,10,11] else 0.003)
+        if np.random.random() < rp:
+            rain = min(25, np.random.exponential(mr/(30*24*rp)))
+        if rain > 0: sol *= 0.2; hum = min(98, hum+20)
+        
+        wind = max(0.2, aw + np.random.normal(0,0.8))
+        et = 0.0023*(temp+17.8)*(sol/1000)*0.15 if sol>0 else 0.01
+        sm += rain*0.7 - et - max(0,(sm-40)*0.02)
+        sm = np.clip(sm, 5, 45)
+        gw += et*0.001 - rain*0.0005*0.7
+        gw = np.clip(gw, 3, 20)
+        
+        pa = 27.8  # panel area for 5kW
+        pw = max(0, sol*pa*0.18*(1-0.004*max(0,temp-25)))
+        csi = sol/csol if csol>10 else 0
+        
+        records.append([ts,round(temp,1),round(temp+np.random.uniform(0,2),1),
+            round(temp-np.random.uniform(0,2),1),round(hum,1),round(sol,1),
+            round(csol,1),round(rain,2),round(wind,1),round(csi,3),
+            round(sm,1),round(gw,2),round(pw,1)])
 
-cols = ["Timestamp","Temperature_C","Temperature_Max_C","Temperature_Min_C",
-    "Humidity_Percent","Solar_Irradiance_W_m2","Clear_Sky_Irradiance_W_m2",
-    "Rainfall_mm","Wind_Speed_m_s","Clear_Sky_Index",
-    "Soil_Moisture_Percent","Groundwater_Depth_m","Power_Output_W"]
-df_w = pd.DataFrame(records, columns=cols)
-df_w.to_csv(f"{RAW}/nasa_power_kalyandurg_2024.csv", index=False)
-print(f"   Saved {len(df_w)} records. Rain={df_w.Rainfall_mm.sum():.0f}mm, Temp={df_w.Temperature_C.min():.0f}-{df_w.Temperature_C.max():.0f}°C")
+    cols = ["Timestamp","Temperature_C","Temperature_Max_C","Temperature_Min_C",
+        "Humidity_Percent","Solar_Irradiance_W_m2","Clear_Sky_Irradiance_W_m2",
+        "Rainfall_mm","Wind_Speed_m_s","Clear_Sky_Index",
+        "Soil_Moisture_Percent","Groundwater_Depth_m","Power_Output_W"]
+    df_w = pd.DataFrame(records, columns=cols)
+    df_w.to_csv(f"{RAW}/nasa_power_kalyandurg_2024.csv", index=False)
+    print(f"   Saved {len(df_w)} records. Rain={df_w.Rainfall_mm.sum():.0f}mm, Temp={df_w.Temperature_C.min():.0f}-{df_w.Temperature_C.max():.0f}°C")
 
 # ============ STEP 2: GENERATE CROP DATA ============
-print("[2/5] Generating crop data...")
-crops_info = {"Groundnut":(700000,(300,900),"Kharif"),"Rice":(30000,(2500,4000),"Kharif"),
-    "Chickpea":(50000,(500,1200),"Rabi"),"Pigeonpea":(25000,(400,800),"Kharif"),
-    "Sunflower":(45000,(500,1000),"Kharif"),"Sorghum":(20000,(600,1500),"Kharif")}
-crop_recs = []
-for yr in range(2005,2025):
-    for cn,(ar,(yl,yh),se) in crops_info.items():
-        rf = np.clip(np.random.normal(1,0.25),0.4,1.5)
-        a = ar*(1+np.random.uniform(-0.2,0.2))
-        y = (yl+yh)/2*rf + np.random.normal(0,50)
-        crop_recs.append([yr,"Anantapur",cn,se,round(a),round(a*y/1000),round(y),
-            round(544*rf),round(28.5+np.random.normal(0,0.8),1),round(16.9+np.random.normal(0,2),1)])
-df_c = pd.DataFrame(crop_recs, columns=["Year","District","Crop","Season","Area_ha",
-    "Production_tonnes","Yield_kg_per_ha","Annual_Rainfall_mm","Avg_Temperature_C","Irrigated_Pct"])
-df_c.to_csv(f"{RAW}/icrisat_crop_data_anantapur.csv", index=False)
-print(f"   Saved {len(df_c)} records")
+if os.path.exists(f"{RAW}/icrisat_crop_data_anantapur.csv") and os.path.getsize(f"{RAW}/icrisat_crop_data_anantapur.csv") > 5000:
+    print("[2/5] Real ICRISAT data found — skipping generation ✅")
+    df_c = pd.read_csv(f"{RAW}/icrisat_crop_data_anantapur.csv")
+else:
+    print("[2/5] Generating crop data...")
+    
+    crops_info = {"Groundnut":(700000,(300,900),"Kharif"),"Rice":(30000,(2500,4000),"Kharif"),
+        "Chickpea":(50000,(500,1200),"Rabi"),"Pigeonpea":(25000,(400,800),"Kharif"),
+        "Sunflower":(45000,(500,1000),"Kharif"),"Sorghum":(20000,(600,1500),"Kharif")}
+    crop_recs = []
+    for yr in range(2005,2025):
+        for cn,(ar,(yl,yh),se) in crops_info.items():
+            rf = np.clip(np.random.normal(1,0.25),0.4,1.5)
+            a = ar*(1+np.random.uniform(-0.2,0.2))
+            y = (yl+yh)/2*rf + np.random.normal(0,50)
+            crop_recs.append([yr,"Anantapur",cn,se,round(a),round(a*y/1000),round(y),
+                round(544*rf),round(28.5+np.random.normal(0,0.8),1),round(16.9+np.random.normal(0,2),1)])
+    df_c = pd.DataFrame(crop_recs, columns=["Year","District","Crop","Season","Area_ha",
+        "Production_tonnes","Yield_kg_per_ha","Annual_Rainfall_mm","Avg_Temperature_C","Irrigated_Pct"])
+    df_c.to_csv(f"{RAW}/icrisat_crop_data_anantapur.csv", index=False)
+    print(f"   Saved {len(df_c)} records")
 
 # ============ STEP 3: GENERATE VILLAGE + GROUNDWATER DATA ============
 print("[3/5] Generating village + groundwater data...")
+
 villages = ["Kalyandurg","Bommanahal","Beluguppa","Rayadurg","Gummagatta",
     "Settur","Kundurpi","Tadimarri","Bathalapalle","Kanaganapalle",
     "Kambadur","Ramagiri","Chennekothapalle","Brahmasamudram","Parnapalle",
@@ -145,7 +155,7 @@ print("[4/5] Training ML models...")
 
 # --- Model 1: Soil Moisture (GradientBoosting) ---
 df = df_w.copy()
-df["Timestamp"] = pd.to_datetime(df["Timestamp"])
+df["Timestamp"] = pd.to_datetime(df["Timestamp"], format="mixed")
 df["Hour"] = df["Timestamp"].dt.hour
 df["DayOfYear"] = df["Timestamp"].dt.dayofyear
 for lag in range(1,7):
@@ -181,7 +191,7 @@ print(f"   Moisture model R²: {r2_m:.4f}")
 
 # --- Model 2: Solar Power (MLP) ---
 df2 = df_w.copy()
-df2["Timestamp"] = pd.to_datetime(df2["Timestamp"])
+df2["Timestamp"] = pd.to_datetime(df2["Timestamp"], format="mixed")
 df2["Hour_sin"] = np.sin(2*np.pi*df2.Timestamp.dt.hour/24)
 df2["Hour_cos"] = np.cos(2*np.pi*df2.Timestamp.dt.hour/24)
 df2["Day_sin"] = np.sin(2*np.pi*df2.Timestamp.dt.dayofyear/365)
